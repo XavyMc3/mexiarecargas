@@ -20,7 +20,7 @@ const CONFIG = {
         {
             name: "ROBLOX",
             slug: "roblox",
-            iconUrl: "img/icon-roblox.png",
+            iconUrl: "img/roblox.webp",
             requirementsList: [
                 "Comprobante de pago.",
                 "Usuario y contraseña de tu cuenta de Roblox (método recomendado) o código de Gift Card.",
@@ -57,7 +57,7 @@ const CONFIG = {
         {
             name: "Clash Royale",
             slug: "clash-royale",
-            iconUrl: "img/icon-clashroyale.png",
+            iconUrl: "img/clashroyale.webp",
             requirementsList: [
                 "Comprobante de pago.",
                 "Datos de inicio de sesión de tu cuenta (Supercell ID, Google Play, o Apple ID).",
@@ -94,7 +94,7 @@ const CONFIG = {
         {
             name: "Clash of Clans",
             slug: "clash-of-clans",
-            iconUrl: "img/icon-clashofclans.png",
+            iconUrl: "img/clashofc.webp",
             requirementsList: [
                 "Comprobante de pago.",
                 "Datos de inicio de sesión de tu cuenta (Supercell ID, Google Play, o Apple ID).",
@@ -131,7 +131,7 @@ const CONFIG = {
         {
             name: "Brawl Stars",
             slug: "brawl-stars",
-            iconUrl: "img/icon-brawlstars.png",
+            iconUrl: "img/brawl-stars-logo.png",
             requirementsList: [
                 "Comprobante de pago.",
                 "Datos de inicio de sesión de tu cuenta (Supercell ID, Google Play, o Apple ID).",
@@ -153,7 +153,7 @@ const CONFIG = {
         {
             name: "Steam Saldo",
             slug: "steam-saldo",
-            iconUrl: "img/icon-steam.png",
+            iconUrl: "img/Steam.png",
             requirementsList: [
                 "Comprobante de pago.",
                 "Nombre de usuario de tu cuenta de Steam (para asegurarnos que la región sea compatible).",
@@ -185,7 +185,7 @@ const CONFIG = {
         {
             name: "Vistas TikTok",
             slug: "vistas-tiktok",
-            iconUrl: "img/icon-tiktok.png",
+            iconUrl: "img/tiktok.png",
             requirementsList: [
                 "Comprobante de pago.",
                 "El enlace completo y directo del video de TikTok que deseas promocionar.",
