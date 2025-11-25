@@ -1,5 +1,5 @@
 // ============================================
-// DATA CONFIGURATION
+// CONFIGURATION DATA
 // ============================================
 const CONFIG = {
     pageTitle: "Recargas de Juegos y Saldo Digital (Precios en Bs)",
@@ -20,7 +20,7 @@ const CONFIG = {
         {
             name: "ROBLOX",
             slug: "roblox",
-            iconUrl: "img/roblox.png",
+            iconUrl: "img/icon-roblox.png",
             requirementsList: [
                 "Comprobante de pago.",
                 "Usuario y contraseña de tu cuenta de Roblox (método recomendado) o código de Gift Card.",
@@ -43,14 +43,14 @@ const CONFIG = {
                     whatsappMessage: "Hola, estoy interesado en la recarga de 2000 Robux para ROBLOX por 280bs. Por favor, envíame el comprobante de pago e indica si el método de recarga será por: 1. Usuario y contraseña (recomienda). 2. Gift Card."
                 },
                 {
-                    "option": "5250 Robux",
-                    "price": 700,
-                    "whatsappMessage": "Hola, estoy interesado en la recarga de 5250 Robux para ROBLOX por 700bs. Por favor, envíame el comprobante de pago e indica si el método de recarga será por: 1. Usuario y contraseña (recomienda). 2. Gift Card."
+                    option: "5250 Robux",
+                    price: 700,
+                    whatsappMessage: "Hola, estoy interesado en la recarga de 5250 Robux para ROBLOX por 700bs. Por favor, envíame el comprobante de pago e indica si el método de recarga será por: 1. Usuario y contraseña (recomienda). 2. Gift Card."
                 },
                 {
-                    "option": "Roblox Premium (1 Mes)",
-                    "price": 130,
-                    "whatsappMessage": "Hola, estoy interesado en la suscripción Roblox Premium por 130bs. Por favor, envíame el comprobante de pago y tu usuario y contraseña de ROBLOX para activar la suscripción."
+                    option: "Roblox Premium (1 Mes)",
+                    price: 130,
+                    whatsappMessage: "Hola, estoy interesado en la suscripción Roblox Premium por 130bs. Por favor, envíame el comprobante de pago y tu usuario y contraseña de ROBLOX para activar la suscripción."
                 }
             ]
         },
@@ -213,230 +213,204 @@ const CONFIG = {
 };
 
 // ============================================
-// UTILITY FUNCTIONS
+// DOM ELEMENTS
 // ============================================
+const gamesGrid = document.getElementById('gamesGrid');
+const productModal = document.getElementById('productModal');
+const closeModalBtn = document.getElementById('closeModal');
+const modalGameIcon = document.getElementById('modalGameIcon');
+const modalGameName = document.getElementById('modalGameName');
+const requirementsList = document.getElementById('requirementsList');
+const productsGrid = document.getElementById('productsGrid');
 
-/**
- * Generates a WhatsApp link with a pre-filled message
- * @param {string} phoneNumber - WhatsApp phone number
- * @param {string} message - Pre-filled message
- * @returns {string} WhatsApp URL
- */
-function generateWhatsAppLink(phoneNumber, message) {
-    const encodedMessage = encodeURIComponent(message);
-    return `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
-}
+// ============================================
+// INITIALIZE APP
+// ============================================
+document.addEventListener('DOMContentLoaded', () => {
+    renderGameCards();
+    setupEventListeners();
+});
 
-/**
- * Formats price with currency
- * @param {number} price - Price value
- * @param {string} currency - Currency code
- * @returns {string} Formatted price string
- */
-function formatPrice(price, currency) {
-    return `${price} <span class="currency">${currency}</span>`;
-}
-
-/**
- * Creates a product item element
- * @param {Object} product - Product data
- * @param {string} phoneNumber - WhatsApp phone number
- * @returns {HTMLElement} Product item element
- */
-function createProductItem(product, phoneNumber) {
-    const productItem = document.createElement('div');
-    productItem.className = 'product-item';
-
-    const whatsappLink = generateWhatsAppLink(phoneNumber, product.whatsappMessage);
-
-    productItem.innerHTML = `
-    <div class="product-info">
-      <div class="product-name">${product.option}</div>
-      <div class="product-price">${formatPrice(product.price, CONFIG.currency)}</div>
-    </div>
-    <a href="${whatsappLink}" target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp">
-      Comprar
-    </a>
-  `;
-
-    return productItem;
-}
-
-/**
- * Creates a game card element
- * @param {Object} game - Game data
- * @returns {HTMLElement} Game card element
- */
-function createGameCard(game) {
-    const gameCard = document.createElement('div');
-    gameCard.className = 'game-card';
-    gameCard.setAttribute('data-game', game.slug);
-
-    // Create game header
-    const gameHeader = document.createElement('div');
-    gameHeader.className = 'game-header';
-
-    // Render image with empty space fallback
-    // Using iconUrl from the new config
-    const iconContent = `<img src="${game.iconUrl}" alt="${game.name}" class="game-image" onerror="this.style.opacity='0'">`;
-
-    gameHeader.innerHTML = `
-    <div class="game-icon-wrapper">${iconContent}</div>
-    <h2 class="game-name">${game.name}</h2>
-  `;
-
-    // Create requirements section
-    // Handling requirementsList array
-    let requirementsHtml = '';
-    if (game.requirementsList && game.requirementsList.length > 0) {
-        requirementsHtml = '<ul class="req-list">';
-        game.requirementsList.forEach(req => {
-            requirementsHtml += `<li>${req}</li>`;
-        });
-        requirementsHtml += '</ul>';
-    }
-
-    const requirementsDiv = document.createElement('div');
-    requirementsDiv.className = 'game-requirements';
-    requirementsDiv.innerHTML = `
-    <span class="req-label">Requisitos:</span>
-    ${requirementsHtml}
-  `;
-
-    // Create products list
-    const productsList = document.createElement('div');
-    productsList.className = 'products-list';
-
-    game.products.forEach(product => {
-        const productItem = createProductItem(product, CONFIG.whatsappNumber);
-        productsList.appendChild(productItem);
-    });
-
-    gameCard.appendChild(gameHeader);
-    gameCard.appendChild(requirementsDiv);
-    gameCard.appendChild(productsList);
-
-    return gameCard;
-}
-
-/**
- * Renders all game cards to the grid
- */
-function renderGames() {
-    const gamesGrid = document.getElementById('gamesGrid');
-
-    if (!gamesGrid) {
-        console.error('Games grid container not found');
-        return;
-    }
-
-    // Clear existing content
+// ============================================
+// RENDER GAME CARDS
+// ============================================
+function renderGameCards() {
     gamesGrid.innerHTML = '';
 
-    // Add animation delay for staggered effect
     CONFIG.games.forEach((game, index) => {
-        const gameCard = createGameCard(game);
-        gameCard.style.animationDelay = `${index * 0.1}s`;
+        const gameCard = createGameCard(game, index);
         gamesGrid.appendChild(gameCard);
     });
 }
 
-/**
- * Sets up the floating WhatsApp button
- */
-function setupWhatsAppFloat() {
-    const whatsappFloat = document.getElementById('whatsappFloat');
-    const footerWhatsApp = document.getElementById('footerWhatsApp');
+function createGameCard(game, index) {
+    const card = document.createElement('div');
+    card.className = 'game-card';
+    card.style.animationDelay = `${index * 0.1}s`;
 
-    const defaultMessage = "Hola, estoy interesado en sus servicios de recarga. ¿Podrían darme más información?";
-    const whatsappLink = generateWhatsAppLink(CONFIG.whatsappNumber, defaultMessage);
+    card.innerHTML = `
+    <div class="game-icon-wrapper">
+      <img src="${game.iconUrl}" alt="${game.name} Icon" class="game-icon" loading="lazy">
+    </div>
+    <h3 class="game-name">${game.name}</h3>
+    <p class="game-description">${game.products.length} opciones disponibles</p>
+    <button class="view-products-btn" data-game-slug="${game.slug}">
+      Ver Productos
+    </button>
+  `;
 
-    if (whatsappFloat) {
-        whatsappFloat.href = whatsappLink;
-    }
+    // Add click event to the button
+    const viewBtn = card.querySelector('.view-products-btn');
+    viewBtn.addEventListener('click', () => openModal(game));
 
-    if (footerWhatsApp) {
-        footerWhatsApp.href = whatsappLink;
-    }
+    return card;
 }
 
-/**
- * Adds smooth scroll behavior for anchor links
- */
-function setupSmoothScroll() {
+// ============================================
+// MODAL FUNCTIONALITY
+// ============================================
+function openModal(game) {
+    // Set modal header
+    modalGameIcon.src = game.iconUrl;
+    modalGameIcon.alt = `${game.name} Icon`;
+    modalGameName.textContent = game.name;
+
+    // Render requirements
+    renderRequirements(game.requirementsList);
+
+    // Render products
+    renderProducts(game.products);
+
+    // Show modal with animation
+    productModal.classList.add('active');
+    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+}
+
+function closeModal() {
+    productModal.classList.remove('active');
+    document.body.style.overflow = ''; // Restore scrolling
+}
+
+function renderRequirements(requirements) {
+    requirementsList.innerHTML = '';
+
+    requirements.forEach(requirement => {
+        const li = document.createElement('li');
+        li.textContent = requirement;
+        requirementsList.appendChild(li);
+    });
+}
+
+function renderProducts(products) {
+    productsGrid.innerHTML = '';
+
+    products.forEach(product => {
+        const productCard = createProductCard(product);
+        productsGrid.appendChild(productCard);
+    });
+}
+
+function createProductCard(product) {
+    const card = document.createElement('div');
+    card.className = 'product-card';
+
+    card.innerHTML = `
+    <div class="product-info">
+      <h4>${product.option}</h4>
+      <div class="product-price">${product.price} ${CONFIG.currency.toUpperCase()}</div>
+    </div>
+    <button class="buy-btn" data-whatsapp-message="${encodeURIComponent(product.whatsappMessage)}">
+      Comprar
+    </button>
+  `;
+
+    // Add click event to buy button
+    const buyBtn = card.querySelector('.buy-btn');
+    buyBtn.addEventListener('click', () => handlePurchase(product.whatsappMessage));
+
+    return card;
+}
+
+// ============================================
+// WHATSAPP INTEGRATION
+// ============================================
+function handlePurchase(message) {
+    const whatsappUrl = `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+}
+
+// ============================================
+// EVENT LISTENERS
+// ============================================
+function setupEventListeners() {
+    // Close modal button
+    closeModalBtn.addEventListener('click', closeModal);
+
+    // Close modal when clicking outside content
+    productModal.addEventListener('click', (e) => {
+        if (e.target === productModal) {
+            closeModal();
+        }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && productModal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+
+    // Smooth scroll for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
-            const href = this.getAttribute('href');
-            if (href !== '#') {
-                e.preventDefault();
-                const target = document.querySelector(href);
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
             }
         });
     });
 }
 
-/**
- * Adds intersection observer for fade-in animations
- */
-function setupScrollAnimations() {
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
+// ============================================
+// IMAGE ERROR HANDLING
+// ============================================
+document.addEventListener('error', (e) => {
+    if (e.target.tagName === 'IMG') {
+        console.error('Image failed to load:', e.target.src);
+        // You can set a fallback image here if needed
+        // e.target.src = 'img/placeholder.png';
+    }
+}, true);
 
-    const observer = new IntersectionObserver((entries) => {
+// ============================================
+// UTILITY FUNCTIONS
+// ============================================
+function formatPrice(price) {
+    return `${price} ${CONFIG.currency.toUpperCase()}`;
+}
+
+// ============================================
+// PERFORMANCE OPTIMIZATION
+// ============================================
+// Lazy load images
+if ('IntersectionObserver' in window) {
+    const imageObserver = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                entry.target.classList.add('fade-in');
-                observer.unobserve(entry.target);
+                const img = entry.target;
+                img.src = img.dataset.src || img.src;
+                img.classList.remove('loading');
+                observer.unobserve(img);
             }
         });
-    }, observerOptions);
-
-    document.querySelectorAll('.game-card').forEach(card => {
-        observer.observe(card);
     });
-}
 
-// ============================================
-// INITIALIZATION
-// ============================================
-
-/**
- * Initialize the application when DOM is ready
- */
-function init() {
-    console.log('🎮 Initializing Game Recharge Website...');
-
-    // Render all games
-    renderGames();
-
-    // Setup WhatsApp buttons
-    setupWhatsAppFloat();
-
-    // Setup smooth scrolling
-    setupSmoothScroll();
-
-    // Setup scroll animations
-    setupScrollAnimations();
-
-    console.log('✅ Website initialized successfully!');
-}
-
-// Run initialization when DOM is fully loaded
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-} else {
-    init();
-}
-
-// Export for potential module usage
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { CONFIG, generateWhatsAppLink, formatPrice };
+    // Observe all images with loading class
+    document.querySelectorAll('img.loading').forEach(img => {
+        imageObserver.observe(img);
+    });
 }
